@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import co.edu.icesi.dev.uccareapp.transport.model.system.markers.ProductValidation;
+import co.edu.icesi.dev.uccareapp.transport.model.system.markers.UserValidation;
 import lombok.Data;
 
 @Entity
@@ -26,11 +27,11 @@ public class Users {
 	@GeneratedValue(strategy= GenerationType.AUTO)
 	private long id;
 
-	@Size(min=3, message = "Nombre de usuario debe ser de minimo tres letras", groups = {ProductValidation.class})
+	@Size(min=3, message = "Nombre de usuario debe ser de minimo tres letras", groups = {UserValidation.class})
 	@NotBlank (groups = {ProductValidation.class})
 	private String username;
 
-	@Size(min=8, message = "Contraseña debe ser de minimo 8 letras", groups = ProductValidation.class)
+	@Size(min=8, message = "Contraseña debe ser de minimo 8 letras", groups = UserValidation.class)
 	@NotBlank (groups = ProductValidation.class)
 	private String password;
 	
@@ -38,13 +39,13 @@ public class Users {
 	private UserType type;
 
 	@Transient
-	@Size(min=8, message = "La contraseña nueva debe ser de minimo 8 letras", groups = ProductValidation.class)
+	@Size(min=8, message = "La contraseña nueva debe ser de minimo 8 letras", groups = UserValidation.class)
 	@NotBlank (groups = ProductValidation.class)
 	private String newPassword;
 
 	@Transient
 	@NotBlank (groups = ProductValidation.class)
-	@Size(min=8, message = "Contrasena debe ser de minimo 8 letras", groups = ProductValidation.class)
+	@Size(min=8, message = "Contrasena debe ser de minimo 8 letras", groups = UserValidation.class)
 	private String oldPassword;
 	
 //	@Past (groups = {StepOneUserValidation.class,EditValidation.class})

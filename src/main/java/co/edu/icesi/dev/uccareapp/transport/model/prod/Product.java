@@ -2,6 +2,7 @@ package co.edu.icesi.dev.uccareapp.transport.model.prod;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -15,6 +16,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+
+import org.hibernate.validator.constraints.ScriptAssert;
+
+import co.edu.icesi.dev.uccareapp.transport.model.system.markers.ProductValidation;
+import co.edu.icesi.dev.uccareapp.transport.model.system.markers.SellDate;
 
 /**
  * The persistent class for the product database table.
@@ -22,6 +33,7 @@ import javax.persistence.SequenceGenerator;
  */
 @Entity
 @NamedQuery(name = "Product.findAll", query = "SELECT p FROM Product p")
+@SellDate
 public class Product implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -50,7 +62,8 @@ public class Product implements Serializable {
 	private String name;
 
 	private String productline;
-
+	
+//	@NotBlank (groups = ProductValidation.class)
 	private String productnumber;
 
 	private Integer reorderpoint;
@@ -58,17 +71,24 @@ public class Product implements Serializable {
 	private Integer rowguid;
 
 	private Integer safetystocklevel;
-
-	private Timestamp sellenddate;
-
-	private Timestamp sellstartdate;
-
+	
+	private Date sellstartdate;
+	
+	private Date sellenddate;
+	
+//    @AssertTrue(message = "Sell start date is not before sell end date!", groups = ProductValidation.class)
+//    private boolean isValid() {
+//      return sellstartdate.before(sellenddate);
+//    }
+    
+	@PositiveOrZero (groups = ProductValidation.class)
 	private long size;
 
 	private BigDecimal standardcost;
 
 	private String style;
-
+	
+	@PositiveOrZero (groups = ProductValidation.class)
 	private long weight;
 
 	// bi-directional many-to-one association to Billofmaterial
@@ -87,6 +107,7 @@ public class Product implements Serializable {
 	// bi-directional many-to-one association to Productsubcategory
 	@ManyToOne
 	@JoinColumn(name = "productsubcategoryid")
+	@NotNull (groups = {ProductValidation.class})
 	private Productsubcategory productsubcategory;
 
 	// bi-directional many-to-one association to Unitmeasure
@@ -304,11 +325,11 @@ public class Product implements Serializable {
 		return this.safetystocklevel;
 	}
 
-	public Timestamp getSellenddate() {
+	public Date getSellenddate() {
 		return this.sellenddate;
 	}
 
-	public Timestamp getSellstartdate() {
+	public Date getSellstartdate() {
 		return this.sellstartdate;
 	}
 
@@ -514,11 +535,11 @@ public class Product implements Serializable {
 		this.safetystocklevel = safetystocklevel;
 	}
 
-	public void setSellenddate(Timestamp sellenddate) {
+	public void setSellenddate(Date sellenddate) {
 		this.sellenddate = sellenddate;
 	}
 
-	public void setSellstartdate(Timestamp sellstartdate) {
+	public void setSellstartdate(Date sellstartdate) {
 		this.sellstartdate = sellstartdate;
 	}
 

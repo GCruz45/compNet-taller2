@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Optional;
 
@@ -65,8 +66,8 @@ class ProductServiceTest {
 		
 		product.setProductsubcategory(prodSubcat);
 		product.setProductnumber("productNumber");
-		product.setSellstartdate(new Timestamp(0));
-		product.setSellenddate(new Timestamp(1));
+		product.setSellstartdate(new Date(0));
+		product.setSellenddate(new Date(1));
 		product.setSize(5);
 		product.setWeight(10);
 		
@@ -150,8 +151,8 @@ class ProductServiceTest {
 	@Test
 	@DisplayName("5: Add product whose starting sell date is greater than its ending sell date")
 	public void testAddProduct5() {
-		product.setSellstartdate(new Timestamp(1));
-		product.setSellenddate(new Timestamp(0));
+		product.setSellstartdate(new Date(1));
+		product.setSellenddate(new Date(0));
 		try {			
 			productService.addProduct(product, 0, 0);
 			fail();
@@ -275,7 +276,7 @@ class ProductServiceTest {
 	@Test
 	@DisplayName("104: Change a product's sell start date with a valid one")
 	public void testEditProduct4() {
-		Timestamp newSellStartDate = new Timestamp(1);
+		Date newSellStartDate = new Date(1);
 		product.setSellstartdate(newSellStartDate);
 		try {			
 			Product updatedProduct = productService.editProduct(product, 0, 0);
@@ -289,7 +290,7 @@ class ProductServiceTest {
 	@Test
 	@DisplayName("105: Change a product's sell start date with one that exceeds the sell end date")
 	public void testEditProduct5() {
-		Timestamp newSellStartDate = new Timestamp(2);
+		Date newSellStartDate = new Date(2);
 		product.setSellstartdate(newSellStartDate);
 		try {			
 			productService.editProduct(product, 0, 0);
@@ -314,7 +315,7 @@ class ProductServiceTest {
 	@Test
 	@DisplayName("107: Change a product's sell end date with a valid one")
 	public void testEditProduct7() {
-		Timestamp newSellEndDate = new Timestamp(10);
+		Date newSellEndDate = new Date(10);
 		product.setSellenddate(newSellEndDate);
 		try {			
 			Product updatedProduct = productService.editProduct(product, 0, 0);
@@ -328,8 +329,8 @@ class ProductServiceTest {
 	@Test
 	@DisplayName("108: Change a product's sell end date with one that undercuts the sell start date")
 	public void testEditProduct8() {
-		Timestamp newSellEndDate = new Timestamp(0);
-		product.setSellstartdate(new Timestamp(1));
+		Date newSellEndDate = new Date(0);
+		product.setSellstartdate(new Date(1));
 		product.setSellenddate(newSellEndDate);
 		try {			
 			productService.editProduct(product, 0, 0);
@@ -408,8 +409,8 @@ class ProductServiceTest {
 		int oldProductId = product.getProductid();
 		
 		product.setProductnumber("newProductNumber");
-		product.setSellstartdate(new Timestamp(10));
-		product.setSellenddate(new Timestamp(11));
+		product.setSellstartdate(new Date(10));
+		product.setSellenddate(new Date(11));
 		product.setSize(50);
 		product.setWeight(100);
 		

@@ -12,6 +12,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+
+import co.edu.icesi.dev.uccareapp.transport.model.system.markers.ProductValidation;
+import co.edu.icesi.dev.uccareapp.transport.model.system.markers.ProductinventoryValidation;
 
 /**
  * The persistent class for the productinventory database table.
@@ -31,6 +36,7 @@ public class Productinventory implements Serializable {
 
 	private Timestamp modifieddate;
 
+	@PositiveOrZero (groups = ProductinventoryValidation.class)
 	private Integer quantity;
 
 	private Integer rowguid;
@@ -40,11 +46,13 @@ public class Productinventory implements Serializable {
 	// bi-directional many-to-one association to Location
 	@ManyToOne
 	@JoinColumn(name = "locationid", insertable = false, updatable = false)
+	@NotNull (groups = ProductinventoryValidation.class)
 	private Location location;
 
 	// bi-directional many-to-one association to Product
 	@ManyToOne
 	@JoinColumn(name = "productid", insertable = false, updatable = false)
+	@NotNull (groups = ProductinventoryValidation.class)
 	private Product product;
 
 	public Productinventory() {

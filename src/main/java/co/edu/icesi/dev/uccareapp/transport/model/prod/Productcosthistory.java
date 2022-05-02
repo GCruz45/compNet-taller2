@@ -13,6 +13,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.PositiveOrZero;
+
+import co.edu.icesi.dev.uccareapp.transport.model.system.markers.ProductcosthistoryValidation;
 
 
 /**
@@ -28,7 +34,8 @@ public class Productcosthistory implements Serializable {
 	@SequenceGenerator(name="PRODUCTCOSTHISTORY_PRODUCTCOSTHISTORYID_GENERATOR", allocationSize=1, sequenceName="PRODUCTCOSTHISTORY_SEQ")
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="PRODUCTCOSTHISTORY_PRODUCTCOSTHISTORYID_GENERATOR")
 	private Integer id;
-
+	
+	@PastOrPresent (groups = ProductcosthistoryValidation.class)
 	private Timestamp enddate;
 
 	private Timestamp modifieddate;
@@ -38,6 +45,7 @@ public class Productcosthistory implements Serializable {
 	// bi-directional many-to-one association to Product
 	@ManyToOne
 	@JoinColumn(name = "productid", insertable = false, updatable = false)
+	@NotNull (groups = ProductcosthistoryValidation.class)
 	private Product product;
 
 	public Productcosthistory() {
@@ -58,7 +66,8 @@ public class Productcosthistory implements Serializable {
 	public Product getProduct() {
 		return this.product;
 	}
-
+    
+	@PositiveOrZero (groups = ProductcosthistoryValidation.class)
 	public BigDecimal getStandardcost() {
 		return this.standardcost;
 	}

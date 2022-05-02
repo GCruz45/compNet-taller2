@@ -12,6 +12,9 @@ import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.Size;
+
+import co.edu.icesi.dev.uccareapp.transport.model.system.markers.LocationValidation;
 
 /**
  * The persistent class for the location database table.
@@ -27,12 +30,15 @@ public class Location implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LOCATION_LOCATIONID_GENERATOR")
 	private Integer locationid;
 
+	@Size(min=1, max=10, message = "Location availability must fall within 1-10 range.", groups = LocationValidation.class)
 	private BigDecimal availability;
 
+	@Size(min=0, max=1, message = "Location cost rate must fall within 0-1 range.", groups = LocationValidation.class)
 	private BigDecimal costrate;
 
 	private Timestamp modifieddate;
-
+	
+	@Size(min=5, message = "Location name's min size must be 5.", groups = LocationValidation.class)
 	private String name;
 
 	// bi-directional many-to-one association to Productinventory

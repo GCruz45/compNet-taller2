@@ -1,6 +1,9 @@
 package co.edu.icesi.dev.uccareapp.transport.controller.implementation;
 
+import java.sql.Timestamp;
 import java.util.Optional;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,19 +19,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import co.edu.icesi.dev.uccareapp.transport.controller.interfaces.ProductController;
 import co.edu.icesi.dev.uccareapp.transport.model.prod.Product;
+import co.edu.icesi.dev.uccareapp.transport.model.prod.Productsubcategory;
 import co.edu.icesi.dev.uccareapp.transport.model.system.Users;
 import co.edu.icesi.dev.uccareapp.transport.model.system.markers.ProductValidation;
+import co.edu.icesi.dev.uccareapp.transport.service.ProdctsubcategoryServiceImpl;
 import co.edu.icesi.dev.uccareapp.transport.service.ProductServiceImpl;
+import co.edu.icesi.dev.uccareapp.transport.service.ProductcategoryServiceImpl;
 import co.edu.icesi.dev.uccareapp.transport.service.UserServiceImpl;
 
 @Controller
 public class ProductControllerImpl implements ProductController {
 
 	ProductServiceImpl prodService;
+	ProdctsubcategoryServiceImpl prodSubCatService;
+	ProductcategoryServiceImpl prodCatService;
 
 	@Autowired
-	public ProductControllerImpl(ProductServiceImpl prodService) {
+	public ProductControllerImpl(	ProductServiceImpl prodService, 
+									ProdctsubcategoryServiceImpl prodSubCatService, 
+									ProductcategoryServiceImpl prodCatService) {
 		this.prodService = prodService;
+		this.prodSubCatService = prodSubCatService;
+		this.prodCatService = prodCatService;
 	}
 
 	@GetMapping("/login")
@@ -38,30 +50,39 @@ public class ProductControllerImpl implements ProductController {
 
 	@GetMapping("/prods/")
 	public String indexProd(Model model) {
-		model.addAttribute("prod", prodService.findAll());
+		model.addAttribute("prods", prodService.findAll());
 		return "prods/prod-index";
 	}
 
 	@GetMapping("/prods/add")
 	public String addProd(Model model) {
 		model.addAttribute("prods", new Product());
-//		model.addAttribute("types", prodService.getTypes());
+		model.addAttribute("subCats", prodSubCatService.findAll());
+		model.addAttribute("categories", prodCatService.findAll());
+//	    model.addAttribute("ts", new Timestamp());
 		return "prods/prod-add";
 	}
 
 	@PostMapping("/prods/add")
-	public String saveProd(@Validated(ProductValidation.class) @ModelAttribute Product product,
+	public String saveProd(@Validated(ProductValidation.class) @ModelAttribute("prods")  Product product,
 			BindingResult bindingResult, Model model, @RequestParam(value = "action", required = true) String action) throws Exception {
 		if (action.equals("Cancel"))
 			return "redirect:/prods/";
+		if (action.equals("Add Product")) {
+			model.addAttribute("id", product.getProductid());
+			model.addAttribute("prods", product);
+			model.addAttribute("subCats", prodSubCatService.findAll());
+			model.addAttribute("categories", prodCatService.findAll());
+			
+			int subcatId = product.getProductsubcategory().getProductsubcategoryid();
+			int catId = product.getProductsubcategory().getProductcategory().getProductcategoryid();
+			
+			prodService.addProduct(product,catId,subcatId);
+			return "redirect:/prods/";
+		}
 		if (bindingResult.hasErrors()) {
 			return "prods/prod-add";
 		}
-		if (!action.equals("Cancel")) {
-//			model.addAttribute("types", prodService.getTypes());
-		}
-		prodService.addProduct(product,0,0);
-		model.addAttribute("id", product.getProductid());
 		return "prods/prod-add";
 	}
 
@@ -103,7 +124,7 @@ public class ProductControllerImpl implements ProductController {
 	}
 
 	@GetMapping("/prods/del/{id}")
-	public String deleteUser(@PathVariable("id") int id, Model model) {
+	public String deleteProd(@PathVariable("id") int id, Model model) {
 		Product product = prodService.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
 		prodService.delete(product);
 		model.addAttribute("prod", prodService.findAll());
